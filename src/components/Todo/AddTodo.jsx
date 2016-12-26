@@ -1,24 +1,43 @@
 import React, { Component, PropTypes } from 'react';
+import { Button } from 'semantic-ui-react';
+import { Input } from 'semantic-ui-react';
 
 export default class AddTodo extends Component {
+  constructor( props ) {
+    super();
+    this.state = {
+      inputValue: ''
+    }
+  }
+
   render() {
     return (
       <div className="addTodo">
-        <input type='text' ref='todo' />
-        <button onClick={(e) => this.handleClick(e)}>
+        <Input value={this.state.inputValue} type='text'
+          onChange={e => this.setState({ inputValue: e.target.value })}
+          onKeyPress={e => this.handleKeyPress(e)}/>
+        <Button onClick={e => this.handleClick(e)}>
           ADD
-        </button>
+        </Button>
       </div>
     )
   }
 
-  handleClick(e) {
-    const todoNode = this.refs.todo
-    const text = todoNode.value.trim()
+  add = () => {
+    const text = this.state.inputValue.trim();
     if ( text.length > 0 ) {
-      this.props.onAddClick( text )
-      todoNode.value = ''
+      this.props.onAddClick( text );
+      this.setState({ inputValue: '' });
     } // if
+  }
+
+  handleClick( e ) {
+    this.add();
+  }
+
+  handleKeyPress( e ) {
+    if ( e.key == "Enter" )
+      this.add();
   }
 }
 
