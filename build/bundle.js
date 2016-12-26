@@ -65,7 +65,7 @@
 /******/ 	}
 /******/ 	
 /******/ 	var hotApplyOnUpdate = true;
-/******/ 	var hotCurrentHash = "b512eb5a713ef6d94e10"; // eslint-disable-line no-unused-vars
+/******/ 	var hotCurrentHash = "c4a95e8e6a253ddd9ebe"; // eslint-disable-line no-unused-vars
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentParents = []; // eslint-disable-line no-unused-vars
 /******/ 	
@@ -585,7 +585,7 @@
 
 	__webpack_require__(1);
 	__webpack_require__(3);
-	module.exports = __webpack_require__(218);
+	module.exports = __webpack_require__(221);
 
 
 /***/ },
@@ -709,7 +709,7 @@
 
 	var _App2 = _interopRequireDefault(_App);
 
-	var _AppReducers = __webpack_require__(216);
+	var _AppReducers = __webpack_require__(218);
 
 	var _AppReducers2 = _interopRequireDefault(_AppReducers);
 
@@ -23891,19 +23891,27 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var _react = __webpack_require__(4);
 
 	var _react2 = _interopRequireDefault(_react);
 
 	var _reactRedux = __webpack_require__(202);
 
-	var _TodoActions = __webpack_require__(212);
+	var _VisibilityFilterActions = __webpack_require__(212);
 
-	var _AddTodo = __webpack_require__(213);
+	var _TodoActions = __webpack_require__(213);
+
+	var _FilterList = __webpack_require__(214);
+
+	var _FilterList2 = _interopRequireDefault(_FilterList);
+
+	var _AddTodo = __webpack_require__(215);
 
 	var _AddTodo2 = _interopRequireDefault(_AddTodo);
 
-	var _TodoList = __webpack_require__(214);
+	var _TodoList = __webpack_require__(216);
 
 	var _TodoList2 = _interopRequireDefault(_TodoList);
 
@@ -23929,16 +23937,23 @@
 	    value: function render() {
 	      var _props = this.props,
 	          dispatch = _props.dispatch,
-	          todos = _props.todos;
+	          visibilityFilter = _props.visibilityFilter,
+	          visibleTodos = _props.visibleTodos;
 
 	      return _react2.default.createElement(
 	        'div',
 	        { className: 'app' },
+	        _react2.default.createElement(_FilterList2.default, _extends({
+	          filter: visibilityFilter
+	        }, _VisibilityFilterActions.VisibilityFilters, {
+	          onFilterChange: function onFilterChange(filter) {
+	            return dispatch((0, _VisibilityFilterActions.setVisibilityFilter)(filter));
+	          } })),
 	        _react2.default.createElement(_AddTodo2.default, { onAddClick: function onAddClick(text) {
 	            return dispatch((0, _TodoActions.addTodo)(text));
 	          } }),
 	        _react2.default.createElement(_TodoList2.default, {
-	          todos: todos,
+	          todos: visibleTodos,
 	          onTodoClick: function onTodoClick(index) {
 	            return dispatch((0, _TodoActions.toggleTodo)(index));
 	          },
@@ -23952,12 +23967,66 @@
 	  return App;
 	}(_react.Component);
 
-	exports.default = (0, _reactRedux.connect)(function (state) {
-	  return state;
-	})(App);
+	function getVisibilityTodos(todos, filter) {
+	  var visibleTodos = [];
+	  switch (filter) {
+	    case _VisibilityFilterActions.VisibilityFilters.SHOW_ALL:
+	      todos.map(function (todo, index) {
+	        visibleTodos.push(_extends({ index: index }, todo));
+	      });
+	      return visibleTodos;
+	    case _VisibilityFilterActions.VisibilityFilters.SHOW_COMPLETED:
+	      todos.map(function (todo, index) {
+	        if (todo.completed) visibleTodos.push(_extends({ index: index }, todo));
+	      });
+	      return visibleTodos;
+	    case _VisibilityFilterActions.VisibilityFilters.SHOW_ACTIVE:
+	      todos.map(function (todo, index) {
+	        if (!todo.completed) visibleTodos.push(_extends({ index: index }, todo));
+	      });
+	      return visibleTodos;
+	  }
+	}
+
+	function select(state) {
+	  return {
+	    visibleTodos: getVisibilityTodos(state.todos, state.visibilityFilter),
+	    visibilityFilter: state.visibilityFilter
+	  };
+	}
+
+	exports.default = (0, _reactRedux.connect)(select)(App);
 
 /***/ },
 /* 212 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.setVisibilityFilter = setVisibilityFilter;
+	// action type
+	var SET_VISIBILITY_FILTER = exports.SET_VISIBILITY_FILTER = "SET_VISIBILITY_FILTER";
+
+	// const
+	var VisibilityFilters = exports.VisibilityFilters = {
+	  SHOW_ALL: 'SHOW_ALL',
+	  SHOW_COMPLETED: 'SHOW_COMPLETED',
+	  SHOW_ACTIVE: 'SHOW_ACTIVE'
+	};
+
+	// action creator
+	function setVisibilityFilter(filter) {
+	  return {
+	    type: SET_VISIBILITY_FILTER,
+	    filter: filter
+	  };
+	}
+
+/***/ },
+/* 213 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -23996,7 +24065,101 @@
 	}
 
 /***/ },
-/* 213 */
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(4);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var FilterList = function (_Component) {
+	  _inherits(FilterList, _Component);
+
+	  function FilterList() {
+	    _classCallCheck(this, FilterList);
+
+	    return _possibleConstructorReturn(this, (FilterList.__proto__ || Object.getPrototypeOf(FilterList)).apply(this, arguments));
+	  }
+
+	  _createClass(FilterList, [{
+	    key: 'handleClick',
+	    value: function handleClick(e, filter) {
+	      this.props.onFilterChange(filter);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _this2 = this;
+
+	      var _props = this.props,
+	          SHOW_ALL = _props.SHOW_ALL,
+	          SHOW_COMPLETED = _props.SHOW_COMPLETED,
+	          SHOW_ACTIVE = _props.SHOW_ACTIVE,
+	          filter = _props.filter;
+
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'filterList' },
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: filter == SHOW_ALL ? 'clicked' : 'unclicked',
+	            onClick: function onClick(e) {
+	              return _this2.handleClick(e, SHOW_ALL);
+	            } },
+	          'All'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: filter == SHOW_COMPLETED ? 'clicked' : 'unclicked',
+	            onClick: function onClick(e) {
+	              return _this2.handleClick(e, SHOW_COMPLETED);
+	            } },
+	          'Completed'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: filter == SHOW_ACTIVE ? 'clicked' : 'unclicked',
+	            onClick: function onClick(e) {
+	              return _this2.handleClick(e, SHOW_ACTIVE);
+	            } },
+	          'Active'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return FilterList;
+	}(_react.Component);
+
+	exports.default = FilterList;
+
+
+	FilterList.propTypes = {
+	  onFilterChange: _react.PropTypes.func.isRequired,
+	  filter: _react.PropTypes.oneOf(['SHOW_ALL', 'SHOW_COMPLETED', 'SHOW_ACTIVE']).isRequired
+	};
+
+/***/ },
+/* 215 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24086,7 +24249,7 @@
 	};
 
 /***/ },
-/* 214 */
+/* 216 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24103,7 +24266,7 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _Todo = __webpack_require__(215);
+	var _Todo = __webpack_require__(217);
 
 	var _Todo2 = _interopRequireDefault(_Todo);
 
@@ -24136,10 +24299,10 @@
 	          return _react2.default.createElement(_Todo2.default, _extends({}, todo, {
 	            key: index,
 	            onClick: function onClick() {
-	              return _this2.props.onTodoClick(index);
+	              return _this2.props.onTodoClick(todo.index);
 	            },
 	            onDelete: function onDelete() {
-	              return _this2.props.onDeleteClick(index);
+	              return _this2.props.onDeleteClick(todo.index);
 	            }
 	          }));
 	        })
@@ -24162,7 +24325,7 @@
 	};
 
 /***/ },
-/* 215 */
+/* 217 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24224,7 +24387,7 @@
 	};
 
 /***/ },
-/* 216 */
+/* 218 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -24235,16 +24398,19 @@
 
 	var _redux = __webpack_require__(181);
 
-	var _TodoReducers = __webpack_require__(217);
+	var _TodoReducers = __webpack_require__(219);
+
+	var _VisibilityFilterReducers = __webpack_require__(220);
 
 	var todoApp = (0, _redux.combineReducers)({
+	  visibilityFilter: _VisibilityFilterReducers.visibilityFilter,
 	  todos: _TodoReducers.todos
 	});
 
 	exports.default = todoApp;
 
 /***/ },
-/* 217 */
+/* 219 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24257,7 +24423,7 @@
 
 	exports.todos = todos;
 
-	var _TodoActions = __webpack_require__(212);
+	var _TodoActions = __webpack_require__(213);
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -24288,15 +24454,41 @@
 	}
 
 /***/ },
-/* 218 */
+/* 220 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	__webpack_require__(219);
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.visibilityFilter = visibilityFilter;
+
+	var _VisibilityFilterActions = __webpack_require__(212);
+
+	var SHOW_ALL = _VisibilityFilterActions.VisibilityFilters.SHOW_ALL;
+	function visibilityFilter() {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : SHOW_ALL;
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case _VisibilityFilterActions.SET_VISIBILITY_FILTER:
+	      return action.filter;
+	    default:
+	      return state;
+	  }
+	}
 
 /***/ },
-/* 219 */
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	__webpack_require__(222);
+
+/***/ },
+/* 222 */
 /***/ function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
