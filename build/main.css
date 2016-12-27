@@ -7,13 +7,13 @@ body {
   margin: auto;
   padding-top: 10px; }
   .app .filterList {
-    opacity: 0.8;
+    opacity: 0.9;
     width: 180px;
     margin: auto; }
     .app .filterList .clicked {
       opacity: 0.5; }
     .app .filterList .unclicked {
-      opacity: 0.8; }
+      opacity: 0.9; }
   .app .addTodo {
     opacity: 0.8;
     width: 220px;
