@@ -1,1 +1,1 @@
-require('./Todo/index.scss');
+import './index.scss';

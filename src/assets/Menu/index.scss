@@ -1,0 +1,24 @@
+#menuPage {
+  // display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 999;
+
+  #menuList {
+    height: 100%;
+    width: 200px;
+    background-color: white;
+    box-shadow: 0 0 10px 3px rgba(0, 0, 0, .8);
+
+    .menuItem {
+      display: block;
+      text-align: center;
+      background-color: lightblue;
+      height: 50px;
+      line-height: 50px;
+      cursor: pointer;
+    }
+  }
+}
