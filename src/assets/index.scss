@@ -5,9 +5,16 @@ body {
 }
 
 #app {
+  position: relative;
   background-image: url("./images/bg2.jpg");
   background-repeat: no-repeat;
-  
+  // padding-left: 200px;
+
+  #demoPage {
+    // border: 1px solid red;
+    margin-left: 201px;
+  }
+
   @import './Todo/index';
   @import './Menu/index';
 }
