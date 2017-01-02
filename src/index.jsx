@@ -5,6 +5,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
+import { Router, Route, browserHistory } from 'react-router';
 
 // reducer
 import todoApp from './reducers/AppReducers';
@@ -17,7 +18,9 @@ let store = createStore( todoApp, window.devToolsExtension ? window.devToolsExte
 
 render(
   <Provider store={store}>
-    <App />
+    <Router history={browserHistory}>
+      <Route path="/(:page)" component={App} />
+    </Router>
   </Provider>,
   rootElement
 );
